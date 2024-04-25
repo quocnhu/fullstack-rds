@@ -2,3 +2,10 @@ react-router-dom v6 : switch v5--> routes
       v6v5 NavLink, Link --> same  
 ---------------------------------------
 bootrap: we need to install npm install lib first then import
+
+-----------------------------------
+v5 use history is no longer used placed by navigate
+--------------backnend + frontend---------------------
+axios + fetch + request but axios is overwhelming
+------------------------------------------------
+nest: backend + frontend (2 in 1) it is potential to be hacked

@@ -1,6 +1,10 @@
 import "./Login.scss";
-
+import { useNavigate } from "react-router-dom";
 const Login = (props) => {
+  let navigate = useNavigate();
+  const handleCreateAccount = () => {
+    navigate("/register");
+  };
   return (
     <div className="login-container">
       <div className="container">
@@ -25,7 +29,7 @@ const Login = (props) => {
               className="form-control"
               placeholder="Enter your password"
             />
-            <button className="btn btn-primary">Login</button>
+            <button className="btn btn-primary">Register</button>
             <span className="text-center">
               <a href="#" className="forgot-password">
                 Forgot your password?
@@ -33,7 +37,12 @@ const Login = (props) => {
             </span>
             {/* hr to make a line */}
             <hr />
-            <button className="btn btn-success">Create new account</button>
+            <button
+              className="btn btn-success"
+              onClick={() => handleCreateAccount()}
+            >
+              Create new account
+            </button>
           </div>
         </div>
       </div>
