@@ -1,0 +1,20 @@
+.red {
+    border: 1px solid red;
+}
+.green {
+    border: 1px solid green;
+}
+.yellow {
+    border: 1px solid yellow;
+}
+
+.login-container {
+    .content-left {
+        border: 1px solid red;
+        border-radius: 10px;
+    }
+    .content-right {
+        border: 1px solid red;
+        border-radius: 10px;
+    }
+}
