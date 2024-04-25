@@ -1,0 +1,4 @@
+react-router-dom v6 : switch v5--> routes
+      v6v5 NavLink, Link --> same  
+---------------------------------------
+bootrap: we need to install npm install lib first then import
