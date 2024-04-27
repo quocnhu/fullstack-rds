@@ -9,13 +9,31 @@ const Register = (props) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const defaultValidInput = {
+    isValidEmail: true,
+    isValidPhone: true,
+    isValidPassword: true,
+    isValidConfirmPassword: true
+  }
+  const [objCheckInput, setObjCheckInput] = useState(defaultValidInput)
   //--------Validate Form-------------
   const isValidInput = () => {
+    setObjCheckInput(defaultValidInput) //reset to true then check top -> bottom
     if (!email) {
       toast.error("Email is required");
+      // console.log("Check before:",{...defaultValidInput}) //becasue we are checking object so we use {}
+      setObjCheckInput({...defaultValidInput, isValidEmail:false}) //on the right used to overwrite the previous one
+      // console.log("Check after",{...defaultValidInput, isValidEmail:false})
+      return false;
+    }
+    let regx = /^\S+@\S+\.\S+$/; //checking regular email
+    if (!regx.test(email)) {
+      setObjCheckInput({...defaultValidInput, isValidEmail:false})
+      toast.error("Please enter a valid email address");
       return false;
     }
     if (!phone) {
+      setObjCheckInput({...defaultValidInput, isValidPhone:false})
       toast.error("Phone is required");
       return false;
     }
@@ -24,16 +42,14 @@ const Register = (props) => {
       return false;
     }
     if (!password) {
+      setObjCheckInput({...defaultValidInput, isValidPassword:false})
       toast.error("Password is required");
       return false;
     }
     if (password !== confirmPassword) {
-      toast.error("Confirmed password is required");
+      setObjCheckInput({...defaultValidInput, isValidConfirmPassword:false})
+      toast.error("Confirm password does not match");
       return false;
-    }
-    let regx = /^\S+@\S+\.\S+$/; //checking regular email
-    if (!regx.test(email)) {
-      toast.error("Please enter a valid email address");
     }
     return true;
   };
@@ -41,7 +57,7 @@ const Register = (props) => {
   const handleRegister = () => {
     let check = isValidInput(); //this v is decleared here but never used
     let userData = { email, phone, username, password }; //shortcut object declaration
-    console.log(userData);
+    // console.log(userData);
   };
 
   //------Navigating Link----------
@@ -67,7 +83,7 @@ const Register = (props) => {
               <lable>Email:</lable>
               <input
                 type="text"
-                className="form-control"
+                className={objCheckInput.isValidEmail ? "form-control" : 'form-control is-invalid'}
                 placeholder="Enter your email"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
@@ -77,7 +93,7 @@ const Register = (props) => {
               <lable>Phone number:</lable>
               <input
                 type="text"
-                className="form-control"
+                className={objCheckInput.isValidPhone ? "form-control" : 'form-control is-invalid'}
                 placeholder="Enter your phone number"
                 value={phone}
                 onChange={(event) => setPhone(event.target.value)}
@@ -97,7 +113,7 @@ const Register = (props) => {
               <lable>Enter password:</lable>
               <input
                 type="password"
-                className="form-control"
+                className={objCheckInput.isValidPassword ? "form-control" : 'form-control is-invalid'}
                 placeholder="Enter password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
@@ -107,7 +123,7 @@ const Register = (props) => {
               <lable>Re-enter password:</lable>
               <input
                 type="password"
-                className="form-control"
+                className={objCheckInput.isValidConfirmPassword ? "form-control" : 'form-control is-invalid'}
                 placeholder="Re-enter password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
