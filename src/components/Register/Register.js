@@ -1,7 +1,10 @@
 import "./Register.scss";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { toast } from "react-toastify";
+import axios from "axios";
+//=======LINKS============
+import {registerNewUser} from '../../services/userService.js'
 const Register = (props) => {
   //-------declear-state----------
   const [email, setEmail] = useState("");
@@ -15,7 +18,7 @@ const Register = (props) => {
     isValidPassword: true,
     isValidConfirmPassword: true
   }
-  const [objCheckInput, setObjCheckInput] = useState(defaultValidInput)
+  const [objCheckInput, setObjCheckInput] = useState(defaultValidInput) //css
   //--------Validate Form-------------
   const isValidInput = () => {
     setObjCheckInput(defaultValidInput) //reset to true then check top -> bottom
@@ -54,17 +57,41 @@ const Register = (props) => {
     return true;
   };
   //-------handleRegister-----------
-  const handleRegister = () => {
-    let check = isValidInput(); //this v is decleared here but never used
-    let userData = { email, phone, username, password }; //shortcut object declaration
-    // console.log(userData);
+  const handleRegister = async () => {
+    let check = isValidInput(); 
+    // let userData = { email, phone, username, password }; //shortcut object declaration
+    if (check === true) {
+        let response = await registerNewUser(email,phone,username,password) //link from services (just get data)
+        let serverData = response.data;
+        if (+serverData.EC === 0){ //+ 
+          toast.success(serverData.EM);
+          navigateLg("/login"); 
+        } else {
+          toast.error(serverData.EM)
+        }
   };
-
+  }
   //------Navigating Link----------
   let navigateLg = useNavigate();
   const handleNavLogin = () => {
     navigateLg("/login");
   };
+  //-------FETCH API--------
+  // useEffect(() => {
+  //   // const fetchData = async () => {
+  //   //   try {
+  //   //     const response = await axios.get("http://localhost:1176/api/test-api");
+  //   //     console.log("Check data:", response.data); // Access the actual data from the response
+  //   //   } catch (error) {
+  //   //     console.error("Error fetching data:", error); // Handle errors gracefully, log error details
+  //   //   }
+  //   // };
+
+  //   // fetchData(); // Immediately call the function to fetch data
+  //   axios.post("http://localhost:1176/api/v1/register", {
+  //     email,phone,username,password
+  //   })
+  // }, [])
   return (
     <div className="register-container">
       <div className="container">
