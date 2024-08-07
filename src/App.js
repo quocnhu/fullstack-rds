@@ -1,36 +1,18 @@
 import Nav from "./components/Navigation/Nav";
-import {useState,useEffect} from 'react'
+import AppRoutes from "./routes/AppRoutes.js";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Login from "./components/Login/Login";
-import Register from "./components/Register/Register";
-import Users from './components/ManageUsers/Users.js'
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import _ from 'lodash'
+// import _ from "lodash";
 const App = () => {
-  const [account, setAccount] = useState({})
-  useEffect(()=> {
-    let session = sessionStorage.getItem('account')
-    if(session) {
-      setAccount(JSON.parse(session)) // change to object to import to useState
-    }
-  },[])
   return (
     <Router>
-      <div className="app">
-        {account && !_.isEmpty(account) && account.isAuthenticated && <Nav />}
-        <Routes>
-          {/* exact to fix */}
-          <Route path="/" exact element={<div>Home = Hello world</div>} />
-          <Route path="/news" element={<div> Hell ya</div>} />
-          <Route path="/contact" element={<div>Ya Hell</div>} />
-          <Route path="/about" element={<div>Ya Hell</div>} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/users" element={<Users />} />
-          <Route path="*" element={<div>404 not found</div>} />
-        </Routes>
+      <div className="app-header">
+        <Nav />
+      </div>
+      <div className="app-container">
+        <AppRoutes />
       </div>
       <ToastContainer
         position="top-right"
@@ -51,3 +33,5 @@ const App = () => {
 };
 
 export default App;
+
+// {account && !_.isEmpty(account) && account.isAuthenticated && <Nav />}  */}

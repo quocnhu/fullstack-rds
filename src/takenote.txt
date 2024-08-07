@@ -9,3 +9,7 @@ v5 use history is no longer used placed by navigate
 axios + fetch + request but axios is overwhelming
 ------------------------------------------------
 nest: backend + frontend (2 in 1) it is potential to be hacked
+----------
+lodash is used to identify we have authentication or not 
+---------------
+location hook is used to identify route in your project

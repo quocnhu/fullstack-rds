@@ -1,5 +1,5 @@
 import "./Login.scss";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { loginUser } from "../../services/userService.js";
@@ -40,7 +40,8 @@ const Login = (props) => {
         token: 'fake token'
       }
       sessionStorage.setItem('account',JSON.stringify(data))
-      navigate("/users")
+      navigate("/users");
+      window.location.reload();
       
     }
     if (response && response.data && +response.data.EC !== 0){
@@ -49,6 +50,20 @@ const Login = (props) => {
       
     }
   };
+  //=========Handle keyPress===============
+  const handleKeyPress = (event) => {
+   
+    if (event.code === "Enter" && event.keyCode === 13) {
+      handleLogin();
+    }
+  }
+  useEffect(()=>{
+    let session = sessionStorage.getItem('account')
+    if(session) {
+      navigate("/")
+    }
+
+  },[])
   return (
     <div className="login-container">
       <div className="container">
@@ -77,6 +92,9 @@ const Login = (props) => {
               onChange={(event) => {
                 setValueLogin(event.target.value);
               }}
+              onKeyDown = {
+                (event) => handleKeyPress(event)
+              }
             />
             <input
               type="password"
@@ -90,6 +108,9 @@ const Login = (props) => {
               onChange={(event) => {
                 setPassword(event.target.value);
               }}
+              onKeyDown = {
+                (event) => handleKeyPress(event)
+              }
             />
             <button className="btn btn-primary" onClick={() => handleLogin()}>
               LOGIN
