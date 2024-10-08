@@ -13,3 +13,5 @@ nest: backend + frontend (2 in 1) it is potential to be hacked
 lodash is used to identify we have authentication or not 
 ---------------
 location hook is used to identify route in your project
+---------------------------
+using function to kick user which is not authenticated 

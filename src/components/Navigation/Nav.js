@@ -6,6 +6,7 @@ const Nav = () => {
   const [isShow,setIsShow] = useState(true)
   let location = useLocation();
   useEffect(() => {
+    //bug right here will be fixed in the future (using the url to hide nav)
     if(location.pathname === '/login' || location.pathname === '/'){
       setIsShow(false)
     }

@@ -1,5 +1,5 @@
 import "./Login.scss";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { loginUser } from "../../services/userService.js";
@@ -30,40 +30,38 @@ const Login = (props) => {
       toast.error("Please enter your password");
       return;
     }
-   //=========Get data from backend ===============
+    //=========Get data from backend ===============
     let response = await loginUser(valueLogin, password);
-    if (response && response.data && +response.data.EC === 0){
+    if (response && response.data && +response.data.EC === 0) {
       //success
       toast.success(response.data.EM);
       let data = {
         isAuthenticated: true,
-        token: 'fake token'
-      }
-      sessionStorage.setItem('account',JSON.stringify(data))
+        token: "fake token",
+      };
+      sessionStorage.setItem("account", JSON.stringify(data));
       navigate("/users");
+      // force to be reloaded (this ueffect can not run because children change father does not change)
       window.location.reload();
-      
     }
-    if (response && response.data && +response.data.EC !== 0){
+    if (response && response.data && +response.data.EC !== 0) {
       //error
       toast.error(response.data.EM);
-      
     }
   };
   //=========Handle keyPress===============
   const handleKeyPress = (event) => {
-   
     if (event.code === "Enter" && event.keyCode === 13) {
       handleLogin();
     }
-  }
-  useEffect(()=>{
-    let session = sessionStorage.getItem('account')
-    if(session) {
-      navigate("/")
+  };
+  //if it has a session will be pushed to /
+  useEffect(() => {
+    let session = sessionStorage.getItem("account"); 
+    if (session) {
+      navigate("/");
     }
-
-  },[])
+  }, []);
   return (
     <div className="login-container">
       <div className="container">
@@ -92,9 +90,7 @@ const Login = (props) => {
               onChange={(event) => {
                 setValueLogin(event.target.value);
               }}
-              onKeyDown = {
-                (event) => handleKeyPress(event)
-              }
+              onKeyDown={(event) => handleKeyPress(event)}
             />
             <input
               type="password"
@@ -108,9 +104,7 @@ const Login = (props) => {
               onChange={(event) => {
                 setPassword(event.target.value);
               }}
-              onKeyDown = {
-                (event) => handleKeyPress(event)
-              }
+              onKeyDown={(event) => handleKeyPress(event)}
             />
             <button className="btn btn-primary" onClick={() => handleLogin()}>
               LOGIN

@@ -12,4 +12,16 @@ const loginUser = (valueLogin,password) => {
       })
 }
 
-export {registerNewUser, loginUser}
+const fetchAllUser = (currentPage,currentLimit) => { 
+ return axios.get(`http://localhost:1176/api/v1/user/read?page=${currentPage}&limit=${currentLimit}`);
+}
+
+const deleteUser = (user) => {
+  return axios.delete("http://localhost:1176/api/v1/user/delete", {
+    data: { id: user.id } // {user}
+  });
+};
+
+export {registerNewUser, loginUser,fetchAllUser,deleteUser}
+
+//http://localhost:1176/api/v1/user/read?page=1&limit=20
