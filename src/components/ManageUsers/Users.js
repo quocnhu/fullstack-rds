@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { fetchAllUser,deleteUser } from "../../services/userService.js";
 import ReactPaginate from 'react-paginate';
+import ModalDelete from '../ManageUsers/ModalDelete.js'
+import ModalUser from '../ManageUsers/ModalUser.js'
 import "./Users.scss";
 import {toast} from "react-toastify"
 const Users = () => {
-  const [listUsers, setListUsers] = useState([]);       // All fetched users
-  const [filteredUsers, setFilteredUsers] = useState([]); // Users after filtering (for search)
+  const [listUsers, setListUsers] = useState([]);     
+  const [filteredUsers, setFilteredUsers] = useState([]); 
   const [currentPage, setCurrentPage] = useState(1); 
   const [currentLimit, setCurrentLimit] = useState(10);
   const [totalPages, setTotalPages] = useState(0); 
-  const [searchTerm, setSearchTerm] = useState(""); // To store search term
-
-  // Fetch users when the component mounts or when the page changes
+  const [searchTerm, setSearchTerm] = useState(""); 
+  //===Modal Reactbootrap
+  const [isShowModalDelete, setIsShowModalDelete] = useState(false);
+  const [dataModal,setDataModal] = useState({})
+  //===Handle Pagination 
   useEffect(() => {
     fetchUsers();
   }, [currentPage]);
@@ -21,8 +25,8 @@ const Users = () => {
       const response = await fetchAllUser(currentPage, currentLimit);
       console.log("checking fetching data===>",response)
       if (response.data && response.data.EC === 0) {
-        setListUsers(response.data.DT.users);       // Store all users
-        setFilteredUsers(response.data.DT.users);   // Initially, set filtered users same as all users
+        setListUsers(response.data.DT.users);      
+        setFilteredUsers(response.data.DT.users);   
         setTotalPages(response.data.DT.totalPages);
       }
     } catch (error) {
@@ -50,22 +54,30 @@ const Users = () => {
     setCurrentPage(selectedPage);
   };
 
-  // Handle deleting user
+  //=======Handle deleting user
   const handleDeleteUser = async (user) => {
-    // console.log("event data ===>",user)
     try {
-      let response = await deleteUser(user);
-      // console.log("Check response", response);
-      if(response && response.data.EC === 0){
-          toast.success(response.data.EM)
-          fetchUsers(); // Fetch updated users after deletion
-      }else {
-        toast.error(response.data.EM)
-      }
+      setIsShowModalDelete(true)
+      setDataModal(user)
     } catch (error) {
       console.error("Error deleting user:", error);
     }
   }
+    const handleClose = () => {
+      setIsShowModalDelete(false)
+      setDataModal({})
+    }
+    const confirmDeleteUser = async () => {
+        let response = await deleteUser(dataModal);
+      if(response && response.data.EC === 0){
+          toast.success(response.data.EM)
+          fetchUsers(); // Fetch updated users after deletion
+          setIsShowModalDelete(false)
+      }else {
+        toast.error(response.data.EM)
+      }
+    }
+
   return (
     <div className="container">
       <div className="user-header">
@@ -90,23 +102,26 @@ const Users = () => {
       <table className="table table-striped table-bordered">
         <thead>
           <tr>
-            <th>No</th>
-            <th>Id</th>
-            <th>Email</th>
-            <th>Username</th>
-            <th>Actions</th>
+            <th className="text-center">No</th>
+            <th className="text-center">Id</th>
+            <th className="text-center">Email</th>
+            <th className="text-center">Username</th>
+            <th className="text-center">Group</th>
+            <th className="text-center">Actions</th>
           </tr>
         </thead>
         <tbody>
           {filteredUsers && filteredUsers.length > 0 ? (
             filteredUsers.map((user, index) => (
               <tr key={user.id}>
-                <td>{(currentPage - 1) * currentLimit + index + 1}</td>
-                <td>{user.id}</td>
-                <td>{user.email}</td>
-                <td>{user.username}</td>
-                <td>
+                <td className="text-center">{(currentPage - 1) * currentLimit + index + 1}</td>
+                <td className="text-center">{user.id}</td>
+                <td className="text-center">{user.email}</td>
+                <td className="text-center">{user.username}</td>
+                <td className="text-center">{user.Group ? user.Group.name : 'No Group'}</td>
+                <td className="d-flex justify-content-center gap-2">
                   <button className="btn btn-primary">Edit</button>
+                  {/* user of map => pass to function */}
                   <button className="btn btn-danger" onClick={()=>handleDeleteUser(user)}>Delete</button>
                 </td>
               </tr>
@@ -141,6 +156,15 @@ const Users = () => {
           breakLinkClassName={"page-link"}
         />
       )}
+      <ModalDelete 
+      show={isShowModalDelete}
+      handleClose={handleClose}
+      confirmDeleteUser={confirmDeleteUser}
+      dataModal = {dataModal}
+      />
+      <ModalUser 
+        title= {"Create new user"}
+      />
     </div>
   );
 };
