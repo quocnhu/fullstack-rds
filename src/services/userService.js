@@ -16,6 +16,10 @@ const fetchAllUser = (currentPage,currentLimit) => {
  return axios.get(`http://localhost:1176/api/v1/user/read?page=${currentPage}&limit=${currentLimit}`);
 }
 
+
+const createNewUser = (userData) => {
+  return axios.post("http://localhost:1176/api/v1/user/create", {...userData});
+};
 const deleteUser = (user) => {
   return axios.delete("http://localhost:1176/api/v1/user/delete", {
     data: { id: user.id } // {user}
@@ -25,6 +29,6 @@ const fetchGroup = () => {
   return axios.get("http://localhost:1176/api/v1/group/read");
 }
 
-export {registerNewUser, loginUser,fetchAllUser,deleteUser,fetchGroup}
+export {registerNewUser, loginUser,fetchAllUser,deleteUser,createNewUser,fetchGroup}
 
 //http://localhost:1176/api/v1/user/read?page=1&limit=20

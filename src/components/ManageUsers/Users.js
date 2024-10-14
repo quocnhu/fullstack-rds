@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { fetchAllUser,deleteUser } from "../../services/userService.js";
-import ReactPaginate from 'react-paginate';
-import ModalDelete from '../ManageUsers/ModalDelete.js'
-import ModalUser from '../ManageUsers/ModalUser.js'
+import { fetchAllUser, deleteUser } from "../../services/userService.js";
+import ReactPaginate from "react-paginate";
+import ModalDelete from "../ManageUsers/ModalDelete.js";
+import ModalUser from "../ManageUsers/ModalUser.js";
 import "./Users.scss";
-import {toast} from "react-toastify"
+import { toast } from "react-toastify";
 const Users = () => {
-  const [listUsers, setListUsers] = useState([]);     
-  const [filteredUsers, setFilteredUsers] = useState([]); 
-  const [currentPage, setCurrentPage] = useState(1); 
+  const [listUsers, setListUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
   const [currentLimit, setCurrentLimit] = useState(10);
-  const [totalPages, setTotalPages] = useState(0); 
-  const [searchTerm, setSearchTerm] = useState(""); 
-  //===Modal Reactbootrap
+  const [totalPages, setTotalPages] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
+  //===Modal React bootrap
   const [isShowModalDelete, setIsShowModalDelete] = useState(false);
-  const [dataModal,setDataModal] = useState({})
-  //===Handle Pagination 
+  const [dataModal, setDataModal] = useState({});
+  const [isShowModalUser, setIsShowModalUser] = useState(false);
+  //===Handle Pagination
   useEffect(() => {
     fetchUsers();
   }, [currentPage]);
@@ -23,12 +24,22 @@ const Users = () => {
   const fetchUsers = async () => {
     try {
       const response = await fetchAllUser(currentPage, currentLimit);
-      console.log("checking fetching data===>",response)
-      if (response.data && response.data.EC === 0) {
-        setListUsers(response.data.DT.users);      
-        setFilteredUsers(response.data.DT.users);   
+      console.log("checking fetching data===>", response);
+  
+    if (response.data && response.data.EC === 0) {
+      const users = response.data.DT.users;
+
+      // Check if the current page is empty after deletion
+      if (users.length === 0 && currentPage > 1) {
+        // Go to the previous page if the current page is empty
+        setCurrentPage(currentPage - 1); 
+      } else {
+        setListUsers(users);
+        setFilteredUsers(users);
         setTotalPages(response.data.DT.totalPages);
       }
+    }
+      
     } catch (error) {
       console.error("Error fetching users:", error);
     }
@@ -40,9 +51,10 @@ const Users = () => {
     setSearchTerm(value);
 
     // Filter the list of users based on name or email
-    const filtered = listUsers.filter(user =>
-      user.username.toLowerCase().includes(value) ||
-      user.email.toLowerCase().includes(value)
+    const filtered = listUsers.filter(
+      (user) =>
+        user.username.toLowerCase().includes(value) ||
+        user.email.toLowerCase().includes(value)
     );
 
     setFilteredUsers(filtered); // Update the filtered users state
@@ -50,42 +62,55 @@ const Users = () => {
 
   // Handle page click for pagination
   const handlePageClick = (event) => {
-    const selectedPage = event.selected + 1; // ReactPaginate returns zero-based index
+    console.log(event)
+    // ReactPaginate returns zero-based index
+    const selectedPage = event.selected + 1; 
     setCurrentPage(selectedPage);
   };
 
   //=======Handle deleting user
   const handleDeleteUser = async (user) => {
     try {
-      setIsShowModalDelete(true)
-      setDataModal(user)
+      setIsShowModalDelete(true);
+      setDataModal(user);
     } catch (error) {
       console.error("Error deleting user:", error);
     }
-  }
-    const handleClose = () => {
-      setIsShowModalDelete(false)
-      setDataModal({})
+  };
+  const handleClose = () => {
+    setIsShowModalDelete(false);
+    setDataModal({});
+  };
+  const confirmDeleteUser = async () => {
+    let response = await deleteUser(dataModal);
+    if (response && response.data.EC === 0) {
+      toast.success(response.data.EM);
+      setIsShowModalDelete(false);
+      fetchUsers(); // Fetch updated users after deletion
+    } else {
+      toast.error(response.data.EM);
     }
-    const confirmDeleteUser = async () => {
-        let response = await deleteUser(dataModal);
-      if(response && response.data.EC === 0){
-          toast.success(response.data.EM)
-          fetchUsers(); // Fetch updated users after deletion
-          setIsShowModalDelete(false)
-      }else {
-        toast.error(response.data.EM)
-      }
-    }
-
+  };
+  //=======Handle adding user
+  const onHideModalUser = () => {
+    //handle refresh and close usermodal
+    setIsShowModalUser(false);
+    fetchUsers(); 
+  };
   return (
     <div className="container">
       <div className="user-header">
-          <h3>User Table</h3>
-          <div>
-            {/* <button className="btn btn-success">Refresh</button> */}
-            <button className="btn btn-primary">Add User</button>
-          </div>
+        <h3>User Table</h3>
+        <div>
+          {/* <button className="btn btn-success">Refresh</button> */}
+          {/*()=> to prevent loop infinate rerender  */}
+          <button
+            className="btn btn-primary"
+            onClick={() => setIsShowModalUser(true)}
+          >
+            Add User
+          </button>
+        </div>
       </div>
 
       {/* Search input */}
@@ -114,15 +139,24 @@ const Users = () => {
           {filteredUsers && filteredUsers.length > 0 ? (
             filteredUsers.map((user, index) => (
               <tr key={user.id}>
-                <td className="text-center">{(currentPage - 1) * currentLimit + index + 1}</td>
+                <td className="text-center">
+                  {(currentPage - 1) * currentLimit + index + 1}
+                </td>
                 <td className="text-center">{user.id}</td>
                 <td className="text-center">{user.email}</td>
                 <td className="text-center">{user.username}</td>
-                <td className="text-center">{user.Group ? user.Group.name : 'No Group'}</td>
+                <td className="text-center">
+                  {user.Group ? user.Group.name : "No Group"}
+                </td>
                 <td className="d-flex justify-content-center gap-2">
                   <button className="btn btn-primary">Edit</button>
                   {/* user of map => pass to function */}
-                  <button className="btn btn-danger" onClick={()=>handleDeleteUser(user)}>Delete</button>
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => handleDeleteUser(user)}
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))
@@ -156,18 +190,18 @@ const Users = () => {
           breakLinkClassName={"page-link"}
         />
       )}
-      <ModalDelete 
-      show={isShowModalDelete}
-      handleClose={handleClose}
-      confirmDeleteUser={confirmDeleteUser}
-      dataModal = {dataModal}
+      <ModalDelete
+        show={isShowModalDelete}
+        handleClose={handleClose}
+        confirmDeleteUser={confirmDeleteUser}
+        dataModal={dataModal}
       />
-      <ModalUser 
-        title= {"Create new user"}
+      <ModalUser
+        title={"Create new user"}
+        onHide={onHideModalUser}
+        show={isShowModalUser}
       />
     </div>
   );
 };
 export default Users;
-
-
