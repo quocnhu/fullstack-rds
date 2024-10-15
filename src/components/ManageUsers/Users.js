@@ -12,10 +12,13 @@ const Users = () => {
   const [currentLimit, setCurrentLimit] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
-  //===Modal React bootrap
+  //===Modal delete React bootrap
   const [isShowModalDelete, setIsShowModalDelete] = useState(false);
   const [dataModal, setDataModal] = useState({});
+  //Modal update/create user
   const [isShowModalUser, setIsShowModalUser] = useState(false);
+  const [actionModalUser, setActionModalUser] = useState('CREATE')
+  const [dataModalUser, setDataModalUser] = useState({});
   //===Handle Pagination
   useEffect(() => {
     fetchUsers();
@@ -92,11 +95,18 @@ const Users = () => {
     }
   };
   //=======Handle adding user
-  const onHideModalUser = () => {
+  const onHideModalUser = async () => {
     //handle refresh and close usermodal
     setIsShowModalUser(false);
-    fetchUsers(); 
+    setDataModalUser({});
+    await fetchUsers(); 
   };
+
+  const handleEditUser = (user) => {
+    setActionModalUser('UPDATE');  //
+    setDataModalUser(user);
+    setIsShowModalUser(true)
+  }
   return (
     <div className="container">
       <div className="user-header">
@@ -106,7 +116,10 @@ const Users = () => {
           {/*()=> to prevent loop infinate rerender  */}
           <button
             className="btn btn-primary"
-            onClick={() => setIsShowModalUser(true)}
+            onClick={() => {
+              setIsShowModalUser(true);
+              setActionModalUser("CREATE")
+            }}
           >
             Add User
           </button>
@@ -149,7 +162,7 @@ const Users = () => {
                   {user.Group ? user.Group.name : "No Group"}
                 </td>
                 <td className="d-flex justify-content-center gap-2">
-                  <button className="btn btn-primary">Edit</button>
+                  <button className="btn btn-primary" onClick= {()=>handleEditUser(user)}>Edit</button>
                   {/* user of map => pass to function */}
                   <button
                     className="btn btn-danger"
@@ -197,9 +210,10 @@ const Users = () => {
         dataModal={dataModal}
       />
       <ModalUser
-        title={"Create new user"}
         onHide={onHideModalUser}
         show={isShowModalUser}
+        action={actionModalUser}
+        dataModalUser={dataModalUser}
       />
     </div>
   );
