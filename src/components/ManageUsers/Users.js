@@ -113,7 +113,7 @@ const Users = () => {
         <h3>User Table</h3>
         <div>
           {/* <button className="btn btn-success">Refresh</button> */}
-          {/*()=> to prevent loop infinate rerender  */}
+          {/*()=> to prevent loop infinity rerender  */}
           <button
             className="btn btn-primary"
             onClick={() => {

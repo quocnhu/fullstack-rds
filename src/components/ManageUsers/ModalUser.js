@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import "../../components/ManageUsers/Users.scss";
-import { fetchGroup, createNewUser } from "../../services/userService.js";
+import { fetchGroup, createNewUser,updateCurrentUser} from "../../services/userService.js";
 import { toast } from "react-toastify";
 import _ from "lodash"; //used to merge form
 function ModalUser(props) {
@@ -40,6 +40,8 @@ function ModalUser(props) {
   };
   //CHECK VALIDATION
   const checkValidateInputs = async () => {
+    //if returns true to prevent executing code below
+    if(action === 'UPDATE') return true;//
     setValidInputs(validInputsDefault);
     let arr = ["email", "phone", "password", "group"];
     let check = true;
@@ -82,18 +84,23 @@ function ModalUser(props) {
       return check; //
     }
   };
-
+  //HANDLING USER CONFIRMING
   const handleConfirmUser = async () => {
+    //create user
     let check = await checkValidateInputs();
+
     if (check === true) {
-      let res = await createNewUser({
-        ...userData,
-        groupId: userData["group"],
-      }); //db
+      let res = action === "CREATE" ?
+
+       await createNewUser({...userData,groupId: userData["group"],
+      }) :
+       await updateCurrentUser({...userData,groupId: userData["group"],
+      });
+      //group-handle
       if (res && res.data.EC === 0) {
         toast.success(res.data.EM);
-        setUserData({ ...defaultUserData, group: userGroups[0]?.id }); //
         props.onHide();
+        setUserData({ ...defaultUserData, group: userGroups && userGroups.length > 0 ? userGroups[0].id: ''}); //
       }
       if (res.data && res.data.EC !== 0) {
         toast.error(res.data.EM);
@@ -103,6 +110,7 @@ function ModalUser(props) {
       }
     }
   };
+  //HANDLING GROUP
   const getGroups = async () => {
     let res = await fetchGroup();
     console.log(res);
@@ -121,7 +129,7 @@ function ModalUser(props) {
     setUserData(defaultUserData);
     setValidInputs(validInputsDefault);
   };
-  //=====SIDE HANDLING=====
+  //=====SIDE HANDLINGS=====
   useEffect(() => {
     getGroups();
   }, []);
@@ -184,7 +192,7 @@ function ModalUser(props) {
               Phone number (<span className="red">*</span>):
             </label>
             <input
-              disabled={action === "CREATE" ? false : true} // 
+              disabled={action === "CREATE" ? false : true} //
               className={
                 validInputs.phone ? "form-control" : "form-control is-invalid"
               }
@@ -246,7 +254,6 @@ function ModalUser(props) {
               value={userData.sex}
               onChange={(event) =>
                 handleOnchangeInput(event.target.value, "sex")
-    
               }
             >
               <option value="Male">Male</option>
@@ -284,7 +291,7 @@ function ModalUser(props) {
           Close
         </Button>
         <Button className="btn btn-warning" onClick={() => handleConfirmUser()}>
-          {action === "CREATE" ? 'Save': 'Update'}
+          {action === "CREATE" ? "Save" : "Update"}
         </Button>
       </Modal.Footer>
     </Modal>

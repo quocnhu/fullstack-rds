@@ -29,6 +29,10 @@ const fetchGroup = () => {
   return axios.get("http://localhost:1176/api/v1/group/read");
 }
 
-export {registerNewUser, loginUser,fetchAllUser,deleteUser,createNewUser,fetchGroup}
+const updateCurrentUser = (userData) => {
+  return axios.put("http://localhost:1176/api/v1/user/update",{...userData});
+}
+
+export {registerNewUser, loginUser,fetchAllUser,deleteUser,createNewUser,fetchGroup,updateCurrentUser}
 
 //http://localhost:1176/api/v1/user/read?page=1&limit=20
