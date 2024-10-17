@@ -33,9 +33,9 @@ const Login = (props) => {
     }
     //=========Get data from backend ===============
     let response = await loginUser(valueLogin, password);
-    if (response && response.data && +response.data.EC === 0) {
+    if (response && +response.EC === 0) {
       //success
-      toast.success(response.data.EM);
+      toast.success(response.EM);
       let data = {
         isAuthenticated: true,
         token: "fake token",
@@ -45,9 +45,9 @@ const Login = (props) => {
       // force to be reloaded (this ueffect can not run because children change father does not change)
       window.location.reload();
     }
-    if (response && response.data && +response.data.EC !== 0) {
+    if (response && +response.EC !== 0) {
       //error
-      toast.error(response.data.EM);
+      toast.error(response.EM);
     }
   };
   //=========Handle keyPress===============

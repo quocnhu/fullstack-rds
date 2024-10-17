@@ -29,8 +29,8 @@ const Users = () => {
       const response = await fetchAllUser(currentPage, currentLimit);
       console.log("checking fetching data===>", response);
   
-    if (response.data && response.data.EC === 0) {
-      const users = response.data.DT.users;
+    if (response && response.EC === 0) {
+      const users = response.DT.users;
 
       // Check if the current page is empty after deletion
       if (users.length === 0 && currentPage > 1) {
@@ -39,7 +39,7 @@ const Users = () => {
       } else {
         setListUsers(users);
         setFilteredUsers(users);
-        setTotalPages(response.data.DT.totalPages);
+        setTotalPages(response.DT.totalPages);
       }
     }
       
@@ -86,12 +86,12 @@ const Users = () => {
   };
   const confirmDeleteUser = async () => {
     let response = await deleteUser(dataModal);
-    if (response && response.data.EC === 0) {
-      toast.success(response.data.EM);
+    if (response && response.EC === 0) {
+      toast.success(response.EM);
       setIsShowModalDelete(false);
       fetchUsers(); // Fetch updated users after deletion
     } else {
-      toast.error(response.data.EM);
+      toast.error(response.EM);
     }
   };
   //=======Handle adding user

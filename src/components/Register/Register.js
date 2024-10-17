@@ -62,7 +62,7 @@ const Register = (props) => {
     // let userData = { email, phone, username, password }; //shortcut object declaration
     if (check === true) {
         let response = await registerNewUser(email,phone,username,password) //link from services (just get data)
-        let serverData = response.data;
+        let serverData = response;
         if (+serverData.EC === 0){ //+ 
           toast.success(serverData.EM);
           navigateLg("/login"); 
