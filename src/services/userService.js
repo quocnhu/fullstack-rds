@@ -1,5 +1,5 @@
 // import axios from 'axios'
-import axios from '../setup/axios.js'
+import axios from '../setup/axios.js' //switch-case
 
 const registerNewUser = (email,phone,username,password) => {
     return axios.post("/api/v1/register", {

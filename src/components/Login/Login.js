@@ -34,7 +34,8 @@ const Login = (props) => {
     //=========Get data from backend ===============
     let response = await loginUser(valueLogin, password);
     if (response && +response.EC === 0) {
-      //success
+     
+      //success fake session local storage
       toast.success(response.EM);
       let data = {
         isAuthenticated: true,
@@ -43,12 +44,12 @@ const Login = (props) => {
       sessionStorage.setItem("account", JSON.stringify(data));
       navigate("/users");
       // force to be reloaded (this ueffect can not run because children change father does not change)
-      window.location.reload();
+      // window.location.reload();//
     }
-    if (response && +response.EC !== 0) {
-      //error
-      toast.error(response.EM);
-    }
+    // if (response && +response.EC !== 0) {
+    //   //error
+    //   toast.error(response.EM);
+    // }
   };
   //=========Handle keyPress===============
   const handleKeyPress = (event) => {

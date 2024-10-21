@@ -27,3 +27,6 @@ using function to kick user which is not authenticated
       email: "",
       phone: "",
   }
+========================================
+frontend has intercepter (merge localhost to on location, and interfere request and response)
+>< backend has middleware
